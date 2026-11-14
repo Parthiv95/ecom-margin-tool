@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Com CSV & Margin Quick-Tool</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background: #f9f9f9; color: #333; }
+        .card { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1 { font-size: 24px; margin-bottom: 8px; color: #111; }
+        p { color: #666; margin-bottom: 16px; }
+        textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; margin-bottom: 12px; }
+        button { background: #0070f3; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        button:hover { background: #0051a2; }
+        pre { background: #eee; padding: 12px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>E-Commerce CSV Clean & Margin Calculator</h1>
+        <p>Paste your raw product data (CSV) below to instantly normalize fields and calculate profit margins.</p>
+        <textarea id="inputData" placeholder="name,cost,price&#10; widget a , 10.00 , 25.00&#10; gadget b , 15.50 , 40.00"></textarea>
+        <button onclick="processData()">Process Data</button>
+    </div>
+
+    <div class="card" id="outputCard" style="display:none;">
+        <h2>Processed Result</h2>
+        <pre id="outputResult"></pre>
+    </div>
+
+    <script>
+        function processData() {
+            const raw = document.getElementById('inputData').value.trim();
+            if (!raw) return alert('Please enter some data.');
+            
+            const lines = raw.split('\n');
+            let results = [];
+            
+            // Assume header: name, cost, price
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(',').map(p => p.trim());
+                if (parts.length >= 3) {
+                    const name = parts[0];
+                    const cost = parseFloat(parts[1]);
+                    const price = parseFloat(parts[2]);
+                    const profit = (price - cost).toFixed(2);
+                    const margin = price > 0 ? (((price - cost) / price) * 100).toFixed(1) + '%' : '0%';
+                    results.push({ name, cost, price, profit, margin });
+                }
+            }
+            
+            document.getElementById('outputCard').style.display = 'block';
+            document.getElementById('outputResult').textContent = JSON.stringify(results, null, 2);
+        }
+    </script>
+</body>
+</html>
